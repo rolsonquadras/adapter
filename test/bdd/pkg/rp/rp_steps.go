@@ -179,7 +179,7 @@ func (s *Steps) createTenant(label, scopesStr, blindedRouteStr, linkedWallet str
 		Callback:             callbackURL,
 		Scopes:               scopes,
 		RequiresBlindedRoute: blindedRoute,
-		SupportsWACI:         supportsWACI,
+		DisableWACI:          !supportsWACI,
 		LinkedWalletURL:      linkedWallet,
 		IsDIDCommV2:          isDIDCommV2,
 	})
@@ -218,9 +218,9 @@ func (s *Steps) createTenant(label, scopesStr, blindedRouteStr, linkedWallet str
 			blindedRoute, response.RequiresBlindedRoute)
 	}
 
-	if response.SupportsWACI != supportsWACI {
+	if response.DisableWACI != !supportsWACI {
 		return fmt.Errorf("supportsWACI prop doesn't match : expected=%t actual=%t",
-			supportsWACI, response.SupportsWACI)
+			supportsWACI, response.DisableWACI)
 	}
 
 	if response.LinkedWalletURL != linkedWallet {

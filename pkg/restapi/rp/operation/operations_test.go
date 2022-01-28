@@ -1515,6 +1515,7 @@ func TestGetPresentationsRequest(t *testing.T) {
 				},
 			},
 			RPPublicDID: rpPublicDID.String(),
+			DisableWACI: true,
 		})
 
 		r := httptest.NewRecorder()
@@ -1544,7 +1545,7 @@ func TestGetPresentationsRequest(t *testing.T) {
 		provider := mem.NewProvider()
 		saveUserConn(t, provider, &rp.UserConnection{
 			User:    &rp.User{Subject: userSubject},
-			RP:      &rp.Tenant{ClientID: rpClientID, SupportsWACI: true, LinkedWalletURL: "example.com"},
+			RP:      &rp.Tenant{ClientID: rpClientID, DisableWACI: false, LinkedWalletURL: "example.com"},
 			Request: &rp.DataRequest{},
 		})
 
@@ -1598,7 +1599,7 @@ func TestGetPresentationsRequest(t *testing.T) {
 				},
 			},
 			RPPublicDID:     rpPublicDID.String(),
-			SupportsWACI:    true,
+			DisableWACI:     false,
 			LinkedWalletURL: "example.com",
 		})
 
@@ -1630,7 +1631,7 @@ func TestGetPresentationsRequest(t *testing.T) {
 		provider := mem.NewProvider()
 		saveUserConn(t, provider, &rp.UserConnection{
 			User:    &rp.User{Subject: userSubject},
-			RP:      &rp.Tenant{ClientID: rpClientID, SupportsWACI: true, LinkedWalletURL: "example.com"},
+			RP:      &rp.Tenant{ClientID: rpClientID, DisableWACI: false, LinkedWalletURL: "example.com"},
 			Request: &rp.DataRequest{},
 		})
 
@@ -1684,7 +1685,7 @@ func TestGetPresentationsRequest(t *testing.T) {
 				},
 			},
 			RPPublicDID:     rpPublicDID.String(),
-			SupportsWACI:    true,
+			DisableWACI:     false,
 			LinkedWalletURL: "example.com",
 			IsDIDCommV2:     true,
 		})
@@ -3103,7 +3104,7 @@ func TestCreateRPTenant(t *testing.T) {
 			Label:                "test label",
 			Scopes:               []string{creditCardStatementScope},
 			RequiresBlindedRoute: true,
-			SupportsWACI:         true,
+			DisableWACI:          true,
 		}
 		clientSecret := uuid.New().String()
 
@@ -3143,7 +3144,7 @@ func TestCreateRPTenant(t *testing.T) {
 			Callback:             callback,
 			Scopes:               []string{creditCardStatementScope},
 			RequiresBlindedRoute: true,
-			SupportsWACI:         true,
+			DisableWACI:          true,
 		}))
 		require.Equal(t, http.StatusCreated, w.Code)
 		response := &CreateRPTenantResponse{}
@@ -3154,7 +3155,7 @@ func TestCreateRPTenant(t *testing.T) {
 		require.Equal(t, expected.Scopes, response.Scopes)
 		require.Equal(t, clientSecret, response.ClientSecret)
 		require.Equal(t, expected.RequiresBlindedRoute, response.RequiresBlindedRoute)
-		require.Equal(t, expected.SupportsWACI, response.SupportsWACI)
+		require.Equal(t, expected.DisableWACI, response.DisableWACI)
 
 		rpStore, err := rp.New(store)
 		require.NoError(t, err)
@@ -3455,7 +3456,7 @@ func TestHandlePresentProofMsg(t *testing.T) { // nolint: gocyclo,cyclop
 		require.NoError(t, err)
 
 		rpClientID := uuid.NewString()
-		err = c.rpStore.SaveRP(&rp.Tenant{ClientID: rpClientID, SupportsWACI: false})
+		err = c.rpStore.SaveRP(&rp.Tenant{ClientID: rpClientID, DisableWACI: true})
 		require.NoError(t, err)
 
 		connID := uuid.New().String()
@@ -3496,7 +3497,7 @@ func TestHandlePresentProofMsg(t *testing.T) { // nolint: gocyclo,cyclop
 		require.NoError(t, err)
 
 		rpClientID := uuid.NewString()
-		err = c.rpStore.SaveRP(&rp.Tenant{ClientID: rpClientID, SupportsWACI: true})
+		err = c.rpStore.SaveRP(&rp.Tenant{ClientID: rpClientID, DisableWACI: false})
 		require.NoError(t, err)
 
 		connID := uuid.New().String()

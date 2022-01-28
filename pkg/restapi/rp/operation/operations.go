@@ -190,7 +190,7 @@ type consentRequestCtx struct {
 	RPPairwiseDID   string
 	RPLabel         string
 	UserData        *userDataCollection
-	SupportsWACI    bool
+	DisableWACI     bool
 	LinkedWalletURL string
 	IsDIDCommV2     bool
 }
@@ -431,7 +431,7 @@ func (o *Operation) hydraLoginHandlerIterOne(w http.ResponseWriter, r *http.Requ
 				ClientID:        tenant.ClientID,
 				PublicDID:       tenant.PublicDID,
 				Label:           tenant.Label,
-				SupportsWACI:    tenant.SupportsWACI,
+				DisableWACI:     tenant.DisableWACI,
 				LinkedWalletURL: tenant.LinkedWalletURL,
 				IsDIDCommV2:     tenant.IsDIDCommV2,
 			},
@@ -681,7 +681,7 @@ func (o *Operation) hydraConsentHandler(w http.ResponseWriter, r *http.Request) 
 		PD:              presentationDefinition,
 		RPPublicDID:     conn.RP.PublicDID,
 		RPLabel:         conn.RP.Label,
-		SupportsWACI:    conn.RP.SupportsWACI,
+		DisableWACI:     conn.RP.DisableWACI,
 		LinkedWalletURL: conn.RP.LinkedWalletURL,
 		IsDIDCommV2:     conn.RP.IsDIDCommV2,
 		UserData:        &userDataCollection{},
@@ -692,7 +692,7 @@ func (o *Operation) hydraConsentHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	redirectURL := fmt.Sprintf("%s?h=%s&uID=%s&waci=%t", o.uiEndpoint, handle, conn.User.Subject, conn.RP.SupportsWACI)
+	redirectURL := fmt.Sprintf("%s?h=%s&uID=%s&waci=%t", o.uiEndpoint, handle, conn.User.Subject, !conn.RP.DisableWACI)
 
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 	logger.Debugf("redirected to: %s", redirectURL)
@@ -803,7 +803,7 @@ func (o *Operation) getPresentationsRequest(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	if cr.SupportsWACI {
+	if !cr.DisableWACI {
 		var walletRedirect string
 
 		if cr.LinkedWalletURL != "" {
@@ -1301,7 +1301,7 @@ func (o *Operation) updateCRContext(invitationID string, record *connection.Reco
 		logger.Errorf("failed to update invitation data in transient storage : %s", err)
 	}
 
-	if crCtx.SupportsWACI {
+	if !crCtx.DisableWACI {
 		// TODO remove this once AFG implements https://github.com/hyperledger/aries-framework-go/issues/2860
 		err = o.persistenceStore.Put(getConnToCtxMappingDBKey(record.ConnectionID),
 			[]byte(crCtx.InvitationID))
@@ -1555,7 +1555,7 @@ func (o *Operation) supportsWACIFlagUsingConnection(msg service.DIDCommAction) (
 		return false, fmt.Errorf("get rp tenant data : %w", err)
 	}
 
-	return rpTenant.SupportsWACI, nil
+	return !rpTenant.DisableWACI, nil
 }
 
 func (o *Operation) handleWACIPresentation(action service.DIDCommAction) (string, error) {
@@ -1706,7 +1706,7 @@ func (o *Operation) createRPTenant(w http.ResponseWriter, r *http.Request) {
 		Label:                request.Label,
 		Scopes:               request.Scopes,
 		RequiresBlindedRoute: request.RequiresBlindedRoute,
-		SupportsWACI:         request.SupportsWACI,
+		DisableWACI:          request.DisableWACI,
 		LinkedWalletURL:      request.LinkedWalletURL,
 		IsDIDCommV2:          request.IsDIDCommV2,
 	})
@@ -1725,7 +1725,7 @@ func (o *Operation) createRPTenant(w http.ResponseWriter, r *http.Request) {
 		PublicDID:            didID,
 		Scopes:               request.Scopes,
 		RequiresBlindedRoute: request.RequiresBlindedRoute,
-		SupportsWACI:         request.SupportsWACI,
+		DisableWACI:          request.DisableWACI,
 		LinkedWalletURL:      request.LinkedWalletURL,
 		IsDIDCommV2:          request.IsDIDCommV2,
 	})

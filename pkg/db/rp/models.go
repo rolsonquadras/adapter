@@ -16,10 +16,10 @@ type Tenant struct {
 	PublicDID            string
 	Label                string
 	Scopes               []string
-	RequiresBlindedRoute bool
-	SupportsWACI         bool
-	IsDIDCommV2          bool
 	LinkedWalletURL      string
+	IsDIDCommV2          bool
+	DisableWACI          bool
+	RequiresBlindedRoute bool
 }
 
 // UserConnection describes a connection a relying party has with a user.
