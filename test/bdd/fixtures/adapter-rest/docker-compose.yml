@@ -18,19 +18,20 @@ services:
       - ADAPTER_REST_TLS_SERVE_KEY=/etc/tls/ec-key.pem
       - ADAPTER_REST_DIDCOMM_INBOUND_HOST=0.0.0.0:9071
       - ADAPTER_REST_DIDCOMM_INBOUND_HOST_EXTERNAL=https://issuer-adapter-rest.trustbloc.local:9071
-      - ADAPTER_REST_TRUSTBLOC_DOMAIN=${BLOC_DOMAIN}
-      - ADAPTER_REST_UNIVERSAL_RESOLVER_URL=http://did.rest.example.com:8072/1.0/identifiers
+      - ADAPTER_REST_TRUSTBLOC_DOMAIN=orb-1.sandbox.trustbloc.dev
+      - ADAPTER_REST_UNIVERSAL_RESOLVER_URL=https://did-resolver.sandbox.trustbloc.dev/1.0/identifiers
       - ADAPTER_REST_DSN=mongodb://mongodb.example.com:27017
       - ADAPTER_REST_DSN_TIMEOUT=45
       - ADAPTER_REST_WALLET_APP_URL=http://demoapp/load
       - OIDC_STORE_KEY=/etc/store-keys/oidc-enc.key
       - ADAPTER_REST_EXTERNAL_URL=https://issuer-adapter-rest.trustbloc.local:9070
-      - ADAPTER_REST_DID_ANCHOR_ORIGIN=https://testnet.orb.local
+      - ADAPTER_REST_DID_ANCHOR_ORIGIN=https://orb-2.sandbox.trustbloc.dev
       - ADAPTER_REST_CONTEXT_PROVIDER_URL=${CONTEXT_PROVIDER_URL}
       - ADAPTER_REST_CM_DESCRIPTORS_FILE=/etc/testdata/manifest-config/cmdescriptors.json
       - ADAPTER_REST_KEY_TYPE=${AGENT_KEY_TYPE}
       - ADAPTER_REST_KEY_AGREEMENT_TYPE=${AGENT_KEY_AGREEMENT_TYPE}
       - ADAPTER_REST_MEDIA_TYPE_PROFILES=${AGENT_MEDIA_TYPE_PROFILES}
+      - ADAPTER_REST_REQUEST_TOKENS=sidetreeToken=ADMIN_TOKEN
     ports:
       - 9070:9070
       - 9071:9071
